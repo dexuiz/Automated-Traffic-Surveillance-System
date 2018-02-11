@@ -223,6 +223,9 @@ app.get("/form",(req,res)=>{
   res.render("form")
 })
 
+app.get("/",(req,res)=>{
+  res.redirect("/home")
+})
 
 app.get("*",(req,res)=>{
   res.send("hello world,this seems to be working")
