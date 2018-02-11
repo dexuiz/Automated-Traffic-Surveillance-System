@@ -132,6 +132,7 @@ app.post("/formin",upload.single('image'),(req,res,next)=>{
         console.log('files and folders deleted are:\n',paths.join('\n'));
       });
       console.log(data);
+      res.redirect("/home")
     }
   })
 })
