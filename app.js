@@ -1,3 +1,16 @@
+/*
+
+Project name:     Automated Traffic surveillance system
+Author List:      deval Srivastava
+Filename:         app.js
+Functions:        None
+Global Variables: express,app,server,bodyParser,mongoose,io,multer,upload,fs,dateTime,request,parser,del,methodOverride,vehicle
+
+*/
+
+
+
+
 var express = require('express')
 var app = express()
 var server  = require("http").createServer(app)
@@ -13,8 +26,7 @@ var parser = require('xml2js').parseString;
 var del = require("del")
 var methodOverride = require("method-override")
 
-// var axios = require('axios')
-
+//server configuration
 var vehicle = require("./models/vehicle.js")
 mongoose.connect("mongodb://dexuiz:deval1997@ds113775.mlab.com:13775/trafficanalysis")
 app.use(express.static(__dirname+"/public"))
@@ -23,17 +35,14 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(methodOverride("_method"))
 
-// app.use(multer({ dest: "./uploads/",
-//  rename: function (fieldname, filename) {
-//    return filename;
-//  },
-// }));
+var port = process.env.PORT||3000;
 
-server.listen(8080,()=>{
+//listens for client on this port
+server.listen(port,()=>{
   console.log("server has started listening on port 8080");
 })
 
-
+//data request when client goes to /home
 app.get("/home/json",(req,res)=>{
   vehicle.find({}).exec(function(err,data){
     if (err) {
@@ -49,6 +58,7 @@ app.get("/home/json",(req,res)=>{
   })
 })
 
+//sockets.io config
 io.sockets.on('connection',function(socket){
   console.log("the map is connected");
 
@@ -59,11 +69,12 @@ io.sockets.on('connection',function(socket){
   socket.emit('success',{hello:'world'})
 })
 
+// client requests for /home
 app.get("/home",(req,res)=>{
   res.render("home")
 })
 
-
+//handling post requests to /new for adding new data by python script
 app.post("/new",(req,res)=>{
   console.log("python script data recieved");
   // console.log(req.body);
@@ -87,7 +98,7 @@ app.post("/new",(req,res)=>{
 });
 
 
-
+//handling get request to view individual edit form for each entry in database
 app.get("/inf/:id/edit",(req,res)=>{
   vehicle.findById(req.params.id,(err,data)=>{
     if (err) {
@@ -98,6 +109,7 @@ app.get("/inf/:id/edit",(req,res)=>{
   })
 })
 
+//handling post request to view form to manually add offender information
 app.post("/formin",upload.single('image'),(req,res,next)=>{
   console.log(req.body.body.liplate);
   console.log(req.file);
@@ -124,6 +136,7 @@ app.post("/formin",upload.single('image'),(req,res,next)=>{
   })
 })
 
+//handling put requests to edit each entry
 app.put("/inf/:id",(req,res)=>{
   vehicle.findById(req,params.id,(err,data)=>{
     car.image.data = fs.readFileSync(req.file.path)
@@ -146,6 +159,7 @@ app.put("/inf/:id",(req,res)=>{
   })
 })
 
+//handling request for each information page for a offender entry in the database
 app.get("/inf/:id",(req,res)=>{
   console.log(req.params.id);
   vehicle.findById(req.params.id,(err,data)=>{
@@ -156,7 +170,7 @@ app.get("/inf/:id",(req,res)=>{
       if(data.liplate){
         var send = {}
         request.post("http://www.regcheck.org.uk/api/reg.asmx/CheckIndia",
-        {form:{RegistrationNumber:data.liplate,username:'dexuiz10'}}, (err,response,body)=>{
+        {form:{RegistrationNumber:data.liplate,username:'dexuiz11'}}, (err,response,body)=>{
           if (response.statusCode == 200) {
             // console.log(body);
              parser(body,(err,result)=>{
@@ -185,6 +199,7 @@ app.get("/inf/:id",(req,res)=>{
   })
 })
 
+//handling search requests
 app.get("/search",(req,res)=>{
   console.log(req.query);
   vehicle.findOne({"liplate":new RegExp(req.query.q,"i")},function(err,vehicle){
@@ -202,6 +217,7 @@ app.get("/search",(req,res)=>{
   })
 })
 
+//handling get requests to view form data
 app.get("/form",(req,res)=>{
   res.render("form")
 })
