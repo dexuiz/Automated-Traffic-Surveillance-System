@@ -1,0 +1,160 @@
+<!-- project Name: Automated Traffic surveillance system -->
+<!-- Author Name:  Deval Srivastava -->
+<!-- Filename: info.ejs -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+    <script src="/semantic/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+   integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+   crossorigin=""></script>
+    <link rel="stylesheet" type="text/css" href="/info.css">
+    <title>Info</title>
+  </head>
+  <body>
+    <div class="ui sidebar inverted left vertical menu ">
+      <a class="item">
+        home
+      </a>
+      <a href="/form" class="item">
+        form
+      </a>
+    </div>
+    <div class="pusher">
+      <div class="ui top menu">
+        <div class="item">
+          <i class="sidebar icon large"></i>
+        </div>
+        <div class=" ui centered header item">
+          Traffic surveillance system
+        </div>
+        <div class="right item">
+          <div class="item">
+            <div class="ui transparent icon input">
+              <form action="/search" method="get">
+                <input type="text" placeholder="Search" id="sinput" type="text" name="q">
+                <i class="search link icon"></i>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+      <div class="ui grid container">
+        <div class="center aligned column">
+          <h2 class="ui icon header">
+            <i class="file icon"></i>
+            <div class="content">
+              Offender Information
+            </div>
+          </h2>
+
+          <h4 class="ui horizontal divider header">
+              <i class="tag icon"></i>
+                Description
+          </h4>
+
+        </div>
+      </div>
+
+      <div class="ui grid container">
+        <div class="ui middle aligned stackable grid container">
+          <div class="row">
+
+            <div class="eight wide column">
+              <div class="ui raised segment">
+                <table class="ui very basic table">
+                  <tbody>
+                    <tr>
+                      <td>License Plate</td>
+                      <td><%=data.liplate %> </td>
+                    </tr>
+                    <tr>
+                      <td>offense type</td>
+                      <td><%=data.offense_type %></td>
+                    </tr>
+                    <tr>
+                      <td> Date</td>
+                      <td><%=data.date %> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <br>
+                <div class="ui raised segment">
+                  <div class="row">
+                    <div class="center aligned column">
+                      <table class="ui very basic table">
+                        <tbody>
+                          <tr>
+                            <td>car information</td>
+                            <td><%=extra.Description %> </td>
+                          </tr>
+                          <tr>
+                            <td>Registration Year</td>
+                            <td><%=extra.RegistrationYear %> </td>
+                          </tr>
+                          <tr>
+                            <td>Vehicle Identification number</td>
+                            <td><%=extra.VechileIdentificationNumber %> </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="six wide right floated column">
+              <div id="mapid">
+
+              </div>
+              <br>
+              <div class="ui raised segment">
+                <button class="ui medium button" id="bt_modal">Evidence</button>
+                <button class="ui medium button"><a href="/inf/<%=data.id%>/edit">Edit entry</a></button>
+              </div>
+            </div>
+            <div class="ui modal">
+              <i class="close icon"></i>
+              <div class="header">
+                Evidence
+              </div>
+              <div class="image content">
+                <div class="ui medium image">
+                  <img src="data:image/jpg;base64,<%=data.img%>" alt="">
+                </div>
+              </div>
+            </div>
+            <br>
+            <br>
+          </div>
+        </div>
+      </div>
+      <br>
+      <br>
+      <br>
+
+      <div class="ui inverted  footer segement ">
+        <div class="ui container">
+          <img class="ui centered tiny image" src="/img/EyantraLogoLarge.png" alt="eyantra_logo">
+          </h2>
+        </div>
+      </div>
+
+    </div>
+    <p id="lat"><%=data.coords.lat %></p>
+    <p id="lng"><%=data.coords.lng %></p>
+  </body>
+  <script src="/info.js">
+  </script>
+</html>

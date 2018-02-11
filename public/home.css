@@ -1,0 +1,17 @@
+.ui.footer{
+  position:fixed;
+  margin-top: 200px;
+  text-align: center;
+  bottom:0;
+  width:100%;
+  background-color:black;
+  color: white;
+}
+
+#mapid{
+  height:500px;
+}
+
+.padding{
+  height: 200px;
+}

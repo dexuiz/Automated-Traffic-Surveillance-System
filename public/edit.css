@@ -1,0 +1,22 @@
+#mapid{
+  height:200px;
+}
+
+.ui.footer{
+  position:fixed;
+  margin-top: 200px;
+  text-align: center;
+  bottom:0;
+  width:100%;
+  background-color:black;
+  color: white;
+}
+
+
+#mapform{
+  visibility:none;
+}
+
+.hidden_lat, .hidden_lng{
+  visibility: hidden;
+}
