@@ -1,3 +1,5 @@
+
+
 $('.icon.sidebar').click(()=>{
   $('.ui.sidebar').sidebar('toggle');
 });
@@ -16,11 +18,13 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 
 var mapform = document.getElementById("mapform");
 
-lat = document.getElementsByClassName("hidden_lat").innerHTML
-lng = document.getElementsByClassName("hidden_lng").innerHTML
+lat = document.getElementsByClassName("hidden_lat")[0].innerHTML
+lng = document.getElementsByClassName("hidden_lng")[0].innerHTML
 
 var oldmarker= new L.marker([lat,lng])
 oldmarker.addTo(map);
+
+map.setView([lat,lng],13)
 
 function onMapClick(e) {
   marker = new L.marker(e.latlng, {draggable:'true'});

@@ -28,6 +28,22 @@ var methodOverride = require("method-override")
 
 //server configuration
 var vehicle = require("./models/vehicle.js")
+var review = require("./models/review.js")
+
+//twilio configuration for sending SMSs
+
+const accountSid = 'ACa241242dc141e1080a32356d9995ac6d';
+const authToken = 'e2da70825afdd3745029197b19ab41fe';
+const client = require('twilio')(accountSid, authToken);
+
+//offenses
+offenses={
+  "SIGNAL":"Breaking the Red light",
+  "SPEED":"Overspeeding",
+  "HELMET":"Without wearing a helmet"
+}
+
+
 mongoose.connect("mongodb://dexuiz:deval1997@ds113775.mlab.com:13775/trafficanalysis")
 app.use(express.static(__dirname+"/public"))
 app.set('view engine','ejs')
@@ -39,7 +55,7 @@ var port = process.env.PORT||3000;
 
 //listens for client on this port
 server.listen(port,()=>{
-  console.log("server has started listening on port 8080");
+  console.log("server has started listening on port "+port);
 })
 
 //data request when client goes to /home
@@ -50,7 +66,11 @@ app.get("/home/json",(req,res)=>{
       res.send("there was an error while looking up data in mongoDB")
     }else {
       console.log("data retrieved");
+      console.log(data.length);
       data.forEach((element)=>{
+        if (!element.coords.lat || !element.coords.lng) {
+            console.log("err",element.liplate);
+        }
         element.image ={};
       })
       res.send(data)
@@ -94,7 +114,18 @@ app.post("/new",(req,res)=>{
   io.sockets.emit("point",car)
   car.image.data = originaldata;
   car.image.contentType = "image/jpg";
-  car.save();
+  car.phone=9699727877;
+  car.save(function(err){
+    console.log("ther was an error ",err);
+  });
+  client.messages
+    .create({
+      to: '+919699727877',
+      from: '+12672148944',
+      body: `The vehicle registered to this number was caught ${offenses[car.offense_type.toString().toUpperCase()]} on ${car.date}`,
+    })
+    .then(message => console.log(message.sid), error => console.error(error));
+
 });
 
 
@@ -137,6 +168,7 @@ app.post("/formin",upload.single('image'),(req,res,next)=>{
   })
 })
 
+
 //handling put requests to edit each entry
 app.put("/inf/:id",(req,res)=>{
   vehicle.findById(req,params.id,(err,data)=>{
@@ -170,8 +202,9 @@ app.get("/inf/:id",(req,res)=>{
     }else {
       if(data.liplate){
         var send = {}
+        var multiple = {}
         request.post("http://www.regcheck.org.uk/api/reg.asmx/CheckIndia",
-        {form:{RegistrationNumber:data.liplate,username:'dexuiz11'}}, (err,response,body)=>{
+        {form:{RegistrationNumber:data.liplate,username:'dexuiz20'}}, (err,response,body)=>{
           if (response.statusCode == 200) {
             // console.log(body);
              parser(body,(err,result)=>{
@@ -183,8 +216,16 @@ app.get("/inf/:id",(req,res)=>{
               }
               data.img=new Buffer(data.image.data).toString('base64');
               data.image={}
-              console.log(send);
-              res.render("info",{data:data,extra:send})
+              // console.log(send);
+              vehicle.find({"liplate":new RegExp(data.liplate,"i")},function(err,vehicles){
+                console.log(vehicles.length);
+                vehicles.forEach(value=>{
+                  console.log(value.liplate);
+                  value["img"]=new Buffer(value.image.data).toString('base64');
+                  delete value.image;
+                })
+                res.render("info",{data:data,extra:send,multiple:vehicles})
+              })
             })
 
           }else{
@@ -216,6 +257,95 @@ app.get("/search",(req,res)=>{
       }
     }
   })
+})
+
+app.get("/review",(req,res)=>{
+  review.find({}).exec((err,data)=>{
+    if (err) {
+      console.erorr("cant find data for review");
+      res.redirect("/home")
+    }else {
+      data.forEach((value)=>{
+        value["random"] =`validate${Math.floor(Math.random()*40+10)}`
+        value["img"] = new Buffer(value.carimage.data).toString("base64")
+        // delete value.limage
+      })
+      res.render("review",{data:data})
+
+    }
+  })
+})
+
+app.post("/reviewget",(req,res)=>{
+  console.log("reviewget endpoint reached")
+  // console.log(req.body.limage)
+  // var limage = new Buffer(req.body.limage, 'base64');
+  var carimage = new Buffer(req.body.carimage,'base64');
+  var rev = new review();
+  // rev.limage.data = limage;
+  rev.carimage.data = carimage;
+  rev.offense_type = req.body.offense_type;
+  rev.coords.lat = req.body.lat;
+  rev.coords.lng = req.body.lng;
+  rev.vehicle_type = req.body.vehicle_type
+  rev.date = req.body.date
+  rev.limage.contentType='image/jpg'
+  rev.carimage.contentType='image/jpg'
+  console.log("endpoint complete")
+  rev.save();
+  res.status(200)
+  res.send("data save complete")
+})
+
+
+app.post("/review/:id",(req,res)=>{
+  console.log("endpoint /review/",req.params.id,"reached");
+  review.findById(req.params.id,function(err,data){
+    if (err) {
+      console.log("there was an error while retreiving review data");
+      res.redirect("/home")
+    }else {
+      console.log("plate",req.body.liplate);
+      if (!req.body.liplate) {
+        data.remove(function(err,removed){
+          if (err) {
+            console.error("there was an error in deleting a review object");
+          }
+          else {
+            console.log("succesfully removed object with license plate");
+          }
+        })
+        res.redirect("/review")
+      }else {
+        console.log(`liplate${req.body}`);
+        var car = new vehicle();
+        car.liplate = req.body.liplate;
+        car.date = data.date;
+        car.image.data = data.carimage.data;
+        car.image.contentType = data.carimage.contentType;
+        car.coords.lat = data.coords.lat;
+        car.coords.lng = data.coords.lng;
+        car.vehicleType = data.vehicleType;
+        car.offense_type = data.offense_type;
+        console.log(car);
+        car.save();
+        data.remove(function(err,removed){
+          if (err) {
+            console.error("there was an error in deleting a review object");
+          }
+          else {
+            console.log("succesfully removed object with license plate");
+          }
+        })
+      }
+
+
+    }
+  })
+})
+
+app.get("/info2",(req,res)=>{
+  res.render("info2")
 })
 
 //handling get requests to view form data

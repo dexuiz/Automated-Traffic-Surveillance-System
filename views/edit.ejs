@@ -21,12 +21,12 @@
    crossorigin=""></script>
    <link href="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.css" rel="stylesheet" type="text/css" />
    <script src="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="edit.css">
-    <title>entry</title>
+   <link rel="stylesheet" type="text/css" href="/edit.css">
+   <title>edit entry</title>
   </head>
   <body>
     <div class="ui sidebar inverted left vertical menu ">
-      <a class="item">
+      <a class="item" href="/home">
         home
       </a>
       <a href="/form" class="item">
@@ -54,11 +54,10 @@
       <div class="center aligned column">
         <h2 class="ui icon header">
           <i class="medium icons">
-            <i class="file icon"></i>
-            <i class="corner add icon"></i>
+            <i class="edit icon"></i>
           </i>
           <div class="content">
-            Add Information
+            Edit Information
           </div>
         </h2>
 
@@ -110,8 +109,8 @@
       </div>
     </div>
   </div>
-  <p class="hidden_lat"></p>
-  <p class="hidden_lng"></p>
+  <p class="hidden_lat"><%=data.coords.lat%></p>
+  <p class="hidden_lng"><%=data.coords.lng%></p>
   </body>
   <script src="/edit.js"></script>
 </html>

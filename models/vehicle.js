@@ -15,7 +15,11 @@ var schema = new mongoose.Schema({
     coords:{
       lat:Number,
       lng:Number
+    },
+    phone:{
+      type:Number
     }
+
 })
 
 module.exports = mongoose.model("vehicle",schema);

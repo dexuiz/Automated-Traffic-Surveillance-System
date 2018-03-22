@@ -30,9 +30,12 @@ fetch('/home/json').then((response)=>{
     console.log("there was an error");
   }else {
     response.json().then(function(data){
+      console.log("database length",data.length);
       data.forEach((item)=>{
-        setMarker(item)
-        connects[data.id] = data
+        if(item)
+          setMarker(item)
+          connects[data.id] = data
+
       })
     })
   }
@@ -58,10 +61,12 @@ socket.on("point",function(data){
 var markers = L.markerClusterGroup();
 
 function setMarker(data){
+    if(data.coords){
       console.log("setmarker invoked");
       var marker = L.marker([data.coords.lat,data.coords.lng]).addTo(map);
       marker.bindPopup("<b>licenseplate:</b>"+data.liplate+"<br>"+"<b>Offense type:</b>"+data.offense_type+'<a href="/inf/'+ data._id +'">go to page</a>')
       markers.addLayer(marker)
+    }
       // map.addLayer(markers)
 
 }

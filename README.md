@@ -1,5 +1,9 @@
 # Automated-Traffic-Surveillance-System
 
-npm install
+requirements:node.js
 
-http://localhost:3000/home
+1.npm install
+
+2.node app.js
+
+3.http://localhost:3000/home

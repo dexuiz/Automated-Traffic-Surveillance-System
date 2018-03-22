@@ -24,6 +24,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css">
+    <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script>
     <link rel="stylesheet" type="text/css" href="/home.css">
     <title>Eyantra</title>
   </head>
@@ -58,34 +59,39 @@
           </div>
         </div>
     </div>
-  <div class="ui grid container">
-    <div class="center aligned four wide column">
+  <div class="ui grid container centered">
+    <%# <div class="center aligned four wide column">
       <div class="ui centered calender">
         <div class="ui input left icon">
           <i class=" icon calender large"></i>
           <input type="text" name="calender" placeholder="date">
         </div>
       </div>
-    </div>
+    </div> %>
     <div class="center aligned eight wide column">
-      <div class="ui  huge header">
-        Today 's Analytics
-      </div>
+      <h2 class="ui icon header">
+        <i class="map outline icon"></i>
+        <div class="content">
+          Traffic Analytics
+          <div class="sub header">
+            Each map marker denotes an offense
+          </div>
+        </div>
+      </h2>
     </div>
-    <div class="center aligned four wide column">
+    <%# <div class="center aligned four wide column">
       <button type="button" name="back" class="circular basic ui icon button">
         <i class="icon arrow left"></i>
       </button>
       <button type="button" name="front" class="circular basic ui icon button">
         <i class="icon arrow right"></i>
       </button>
-    </div>
+    </div> %>
   </div>
 <br>
 <br>
-<br>
-  <div class="ui two column centered grid">
-    <div class="column">
+  <div class="ui one column centered grid">
+    <div class=" column">
       <div id="mapid">
       </div>
     </div>
